@@ -99,7 +99,11 @@ export function apply(ctx: Context, config: Config) {
       headers,
       body: init?.body === undefined ? undefined : JSON.stringify(init.body),
     });
-    const json: any = await res.json().catch(() => null);
+    const json = (await res.json().catch(() => null)) as {
+      success?: boolean;
+      error?: { code?: string; message?: string } | null;
+      data?: unknown;
+    } | null;
       if (!res.ok || !json?.success) {
         const code = json?.error?.code || "HTTP_ERROR";
         let message = json?.error?.message || `HTTP ${res.status} 请求 ${baseUrl}${path} 失败`;
